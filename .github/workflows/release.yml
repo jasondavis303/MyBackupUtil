@@ -16,8 +16,22 @@ jobs:
         with: 
           dotnet-version: 9
 
+      - name: Install Rclone
+        run: sudo -v ; curl https://rclone.org/install.sh | sudo bash
+
+      - name: Get Date Version
+        run: |
+          dt=$(date +"%Y.%m.%d")
+          TSV="$dt.${{github.run_number}}"
+          echo "Version = $TSV"
+          echo "TSV=$TSV" >> $GITHUB_ENV
+          echo $TSV > ./version.txt
+                
+          
       - name: Build
         run: |
-            sed -i "s/\(<Version>\([0-9]\+\.\)\{3\}\)\([0-9]\+\)/\1${{github.run_number}}/" "MyBackupUtil/MyBackupUtil.csproj"
-            dotnet publish "MyBackupUtil/MyBackupUtil.csproj" -c release -p:PublishProfile=linux-x64 -o publish
-            dotnet publish "MyBackupUtil/MyBackupUtil.csproj" -c release -p:PublishProfile=win-x64 -o publish
+            dotnet publish "MyBackupUtil/MyBackupUtil.csproj" /p:Configuration=Release -p:PublishProfile=linux-x64 /p:Version=$TSV /p:ApplicationVersion=$TSV /p:PublishDir=../publish
+            dotnet publish "MyBackupUtil/MyBackupUtil.csproj" /p:Configuration=Release -p:PublishProfile=win-x64 /p:Version=$TSV /p:ApplicationVersion=$TSV  /p:PublishDir=../publish
+            # rclone sync ../MyBackupUtil/publish :s3:s3.dustypig.tv/bin/mybackuputil --s3-provider Wasabi --s3-endpoint s3.us-central-1.wasabisys.com --s3-access-key-id ${{secrets.S3_KEY}} --s3-secret-access-key ${{secrets.S3_SECRET}} -v --timeout 10s
+            # rclone copyto ./version.txt :s3:s3.dustypig.tv/bin/mybackuputil/MyBackupUtil.version --s3-provider Wasabi --s3-endpoint s3.us-central-1.wasabisys.com --s3-access-key-id ${{secrets.S3_KEY}} --s3-secret-access-key ${{secrets.S3_SECRET}} -v --timeout 10s
+                
