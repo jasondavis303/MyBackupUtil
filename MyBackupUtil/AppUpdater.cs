@@ -1,18 +1,22 @@
-﻿using MyBackupUtil.CLOptions;
+﻿using ConsoleAppFramework;
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
 
 namespace MyBackupUtil;
 
+[RegisterCommands]
 internal class AppUpdater
 {
-    const string URL_ROOT = "https://s3.dustypig.tv/bin/mybackuputil/MyBackupUtil";
+    const string URL_ROOT = "https://s3.dustypig.tv/bin/mybackuputil/mybackuputil";
     const string VERSION_URL = URL_ROOT + ".version";
     const string WINDOWS_URL = URL_ROOT + ".exe";
     const string LINUX_URL = URL_ROOT;
 
-    public static async Task Update(UpdateOptions options)
+    /// <summary>
+    /// Try to update the program
+    /// </summary>
+    public async Task Update()
     {
         Console.WriteLine("Checking for updates");
 

@@ -1,16 +1,27 @@
-﻿using MyBackupUtil.CLOptions;
+﻿using ConsoleAppFramework;
 using MyBackupUtil.ConfigOptions;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MyBackupUtil;
 
-internal static class Runner
+[RegisterCommands]
+internal class Runner
 {
-    public static void RunBackup(RunOptions options)
+    /// <summary>
+    /// Runs the backup
+    /// </summary>
+    /// <param name="configFile">-c, Config file</param>
+    public void Run(string? configFile = null)
     {
+        if (string.IsNullOrWhiteSpace(configFile))
+            configFile = Config.DefaultConfigFile;
+
+        Config config = Config.Load(configFile);
+
         Console.WriteLine("Starting backup");
         Console.WriteLine();
 
@@ -20,20 +31,19 @@ internal static class Runner
         {
             //Use rclone to copy files/folders, because it keeps timestamps
 
-            Config config = options.Config.ReadJson<Config>();
             string args;
 
 
             //Add config file if desired
             if (config.IncludeConfigFileInBackup)
-                if(!config.Files.Any(_ => _.Filename.Equals(options.Config.FullName)))
-                    config.Files.Add(new FileBackup { Filename = options.Config.FullName });
+                if (!config.Files.Contains(configFile))
+                    config.Files.Add(configFile);
 
 
             //Copy files
-            foreach(FileBackup fb in config.Files)
+            foreach (string file in config.Files)
             {
-                FileInfo fileInfo = new(fb.Filename);
+                FileInfo fileInfo = new(file);
                 if (fileInfo.Exists)
                 {
                     string newFile = Path.Combine(tmpDir.FullName, fileInfo.FullName.Replace(":", null).Trim(['/', '\\']));
@@ -41,31 +51,23 @@ internal static class Runner
                     RunRclone(args);
                     Console.WriteLine();
                 }
-                else if (fb.ErrorIfMissing)
-                {
-                    throw new FileNotFoundException(fb.Filename);
-                }
             }
 
 
             //Copy dirs
-            foreach(DirectoryBackup db in config.Directories)
+            foreach (DirectoryBackup db in config.Directories)
             {
                 DirectoryInfo dirInfo = new(db.Directory);
                 if (dirInfo.Exists)
                 {
                     string newDir = Path.Combine(tmpDir.FullName, dirInfo.FullName.Replace(":", null).Trim(['/', '\\']));
-                    
+
                     string includes = string.Join(" ", db.RcloneIncludes.Select(_ => "--include " + _));
                     string excludes = string.Join(" ", db.RcloneExcludes.Select(_ => "--exclude " + _));
 
                     args = $"copy \"{dirInfo.FullName}\" \"{newDir}\" --skip-links -v {includes} {excludes}".Trim();
                     RunRclone(args);
                     Console.WriteLine();
-                }
-                else if (db.ErrorIfMissing)
-                {
-                    throw new DirectoryNotFoundException(db.Directory);
                 }
             }
 

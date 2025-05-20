@@ -125,22 +125,22 @@ public static class FileSystemExtensions
     }
 
 
-    static readonly JsonSerializerOptions _defaultJsonWriteOptions = new() { WriteIndented = true };
+    //static readonly JsonSerializerOptions _defaultJsonWriteOptions = new() { WriteIndented = true };
 
-    public static void WriteJson(this FileInfo self, object data) =>
-        self.WriteAllText(JsonSerializer.Serialize(data, _defaultJsonWriteOptions));
+    //public static void WriteJson(this FileInfo self, object data) =>
+    //    self.WriteAllText(JsonSerializer.Serialize(data, _defaultJsonWriteOptions));
 
-    public static void WriteJson(this FileInfo self, object data, JsonSerializerOptions options) =>
-        self.WriteAllText(JsonSerializer.Serialize(data, options));
+    //public static void WriteJson(this FileInfo self, object data, JsonSerializerOptions options) =>
+    //    self.WriteAllText(JsonSerializer.Serialize(data, options));
 
 
-    public static void WriteXml(this FileInfo self, object data)
-    {
-        self.Directory!.Create();
-        using var fs = File.CreateText(self.FullName);
-        var xs = new Xml.Serialization.XmlSerializer(data.GetType());
-        xs.Serialize(fs, data);
-    }
+    //public static void WriteXml(this FileInfo self, object data)
+    //{
+    //    self.Directory!.Create();
+    //    using var fs = File.CreateText(self.FullName);
+    //    var xs = new Xml.Serialization.XmlSerializer(data.GetType());
+    //    xs.Serialize(fs, data);
+    //}
 
     #endregion
 
@@ -157,61 +157,61 @@ public static class FileSystemExtensions
 
 
 
-    static readonly JsonSerializerOptions _defaultJsonReadOptions = new(JsonSerializerDefaults.Web);
+    //static readonly JsonSerializerOptions _defaultJsonReadOptions = new(JsonSerializerDefaults.Web);
 
-    public static T ReadJson<T>(this FileInfo self) => self.ReadJson<T>(_defaultJsonReadOptions);
+    //public static T ReadJson<T>(this FileInfo self) => self.ReadJson<T>(_defaultJsonReadOptions);
 
-    public static bool TryReadJson<T>(this FileInfo self, out T? data)
-    {
-        try
-        {
-            data = self.ReadJson<T>();
-            return true;
-        }
-        catch 
-        {
-            data = default;
-            return false;
-        }
-    }
+    //public static bool TryReadJson<T>(this FileInfo self, out T? data)
+    //{
+    //    try
+    //    {
+    //        data = self.ReadJson<T>();
+    //        return true;
+    //    }
+    //    catch 
+    //    {
+    //        data = default;
+    //        return false;
+    //    }
+    //}
 
-    public static T ReadJson<T>(this FileInfo self, JsonSerializerOptions options) =>
-        JsonSerializer.Deserialize<T>(self.ReadAllText(), options)!;
+    //public static T ReadJson<T>(this FileInfo self, JsonSerializerOptions options) =>
+    //    JsonSerializer.Deserialize<T>(self.ReadAllText(), options)!;
 
-    public static bool TryReadJson<T>(this FileInfo self, JsonSerializerOptions options, out T? data)
-    {
-        try
-        {
-            data = self.ReadJson<T>(options);
-            return true;
-        }
-        catch
-        {
-            data = default; 
-            return false;
-        }
-    }
+    //public static bool TryReadJson<T>(this FileInfo self, JsonSerializerOptions options, out T? data)
+    //{
+    //    try
+    //    {
+    //        data = self.ReadJson<T>(options);
+    //        return true;
+    //    }
+    //    catch
+    //    {
+    //        data = default; 
+    //        return false;
+    //    }
+    //}
 
-    public static T ReadXml<T>(this FileInfo self)
-    {
-        using var fs = self.OpenText();
-        var xs = new Xml.Serialization.XmlSerializer(typeof(T));
-        return (T)xs.Deserialize(fs)!;
-    }
+    //public static T ReadXml<T>(this FileInfo self)
+    //{
+    //    using var fs = self.OpenText();
+    //    var xs = new Xml.Serialization.XmlSerializer(typeof(T));
+    //    return (T)xs.Deserialize(fs)!;
+    //}
 
-    public static bool TryReadXml<T>(this FileInfo self, out T? data)
-    {
-        try
-        {
-            data = self.ReadXml<T>();
-            return true;
-        }
-        catch
-        {
-            data = default;
-            return false;
-        }
-    }
+    //public static bool TryReadXml<T>(this FileInfo self, out T? data)
+    //{
+    //    try
+    //    {
+    //        data = self.ReadXml<T>();
+    //        return true;
+    //    }
+    //    catch
+    //    {
+    //        data = default;
+    //        return false;
+    //    }
+    //}
 
     #endregion
 

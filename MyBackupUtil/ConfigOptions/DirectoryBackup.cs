@@ -6,8 +6,6 @@ internal class DirectoryBackup
 {
     public string Directory { get; set; } = string.Empty;
 
-    public bool ErrorIfMissing { get; set; }
-
     /// <summary>
     /// Only use this OR <see cref="RcloneExcludes"/>.
     /// Do not prefix with the --include, it's done by the backup util.
