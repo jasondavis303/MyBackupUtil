@@ -11,22 +11,24 @@ internal class Program
     {
 #if DEBUG
         string configFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "MyBackupUtil.json");
-        args = ["run", "-c", configFile];
-        //args = ["rclone", "-c", configFile, "-r", "MyRemote:backups/test", "-b", "MyRemote:backups/test.bak", "-f", "\"--tpslimit 5 --fast-list\""];
-        //args = ["add-file", "-c", configFile, "-p", configFile, "-f"];
-        //args = ["remove-file", "-c", configFile, "-p", configFile];
-        //args = ["add-directory", "-c", configFile, "-p", Directory.GetCurrentDirectory(), "-f", "-i", "*.exe"];
-        //args = ["remove-directory", "-c", configFile, "-p", Directory.GetCurrentDirectory()];
+        //args = ["run"];
+        //args = ["rclone", "-r", "MyRemote:backups/test", "-b", "MyRemote:backups/test.bak", "-f", "\"--tpslimit 5 --fast-list\""];
+        //args = ["add-file","-p", configFile, "-f"];
+        //args = ["remove-file", "-p", configFile];
+        //args = ["add-directory", "-p", Directory.GetCurrentDirectory(), "-f", "-i", "*.exe"];
+        //args = ["remove-directory", "-p", Directory.GetCurrentDirectory()];
+        args = ["print"];
 #endif
 
         try
         {
-            Parser.Default.ParseArguments<RunOptions, AddDirectoryOptions, RemoveDirectoryOptions, AddFileOptions, RemoveFileOptions, SetRcloneOptions>(args)
+            Parser.Default.ParseArguments<RunOptions, AddDirectoryOptions, RemoveDirectoryOptions, AddFileOptions, RemoveFileOptions, SetRcloneOptions, PrintOptions>(args)
                 .WithParsed<AddDirectoryOptions>(ConfigEditor.AddDirectory)
                 .WithParsed<RemoveDirectoryOptions>(ConfigEditor.RemoveDirectory)
                 .WithParsed<AddFileOptions>(ConfigEditor.AddFile)
                 .WithParsed<RemoveFileOptions>(ConfigEditor.RemoveFile)
                 .WithParsed<SetRcloneOptions>(ConfigEditor.SetRclone)
+                .WithParsed<PrintOptions>(ConfigEditor.Print)
                 .WithParsed<RunOptions>(Runner.RunBackup);
         }
         catch (Exception ex)

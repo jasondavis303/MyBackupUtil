@@ -52,7 +52,7 @@ internal static class Runner
                     string includes = string.Join(" ", db.RcloneIncludes.Select(_ => "--include " + _));
                     string excludes = string.Join(" ", db.RcloneExcludes.Select(_ => "--exclude " + _));
 
-                    args = $"copy \"{dirInfo.FullName}\" \"{newDir}\" -v {includes} {excludes}".Trim();
+                    args = $"copy \"{dirInfo.FullName}\" \"{newDir}\" --skip-links -v {includes} {excludes}".Trim();
                     RunRclone(args);
                     Console.WriteLine();
                 }

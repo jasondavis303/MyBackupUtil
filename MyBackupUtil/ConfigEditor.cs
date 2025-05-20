@@ -20,6 +20,13 @@ internal static class ConfigEditor
         }
     }
 
+    public static void Print(PrintOptions options)
+    {
+        Console.WriteLine();
+        Console.WriteLine(options.Config.ReadAllText());
+        Console.WriteLine();
+    }
+
 
     public static void AddDirectory(AddDirectoryOptions options)
     {
