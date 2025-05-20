@@ -11,7 +11,7 @@ namespace MyBackupUtil;
 [RegisterCommands]
 internal class ConfigCommands
 {
-    
+
 
     /// <summary>
     /// Configure rclone for backup
@@ -29,7 +29,7 @@ internal class ConfigCommands
 
 
         Config config = Config.Load(configFile);
-        
+
         Console.WriteLine("Configuring rclone:");
         Console.WriteLine($"\tRemote: {remote}");
         Console.WriteLine($"\tBackup: {backup}");
@@ -55,21 +55,21 @@ internal class ConfigCommands
 
         Console.WriteLine("Adding directory:");
         Console.WriteLine($"\t{directory}");
-      
-        if(include != null)
+
+        if (include != null)
             Console.WriteLine($"\tInclude: {string.Join(' ', include)}");
 
         if (exclude != null)
             Console.WriteLine($"\tExclude: {string.Join(' ', exclude)}");
 
         config.Directories.RemoveAll(d => d.Directory == directory);
-        
+
         DirectoryBackup directoryBackup = new DirectoryBackup { Directory = directory };
-        if(include != null)
+        if (include != null)
             directoryBackup.RcloneIncludes.AddRange(include);
         if (exclude != null)
             directoryBackup.RcloneIncludes.AddRange(exclude);
-       
+
         config.Save(configFile);
     }
 
@@ -120,7 +120,7 @@ internal class ConfigCommands
         Console.WriteLine("Removing file:");
         Console.WriteLine($"\t{file}");
 
-        if(config.Files.Contains(file))
+        if (config.Files.Contains(file))
         {
             config.Files.Remove(file);
             config.Save(configFile);
@@ -145,7 +145,7 @@ internal class ConfigCommands
     /// Exclude the config file from backups
     /// </summary>
     /// <param name="configFile">-c, Config file</param>
-    public void ExcludeConfigFromBackup(string? configFile = null) 
+    public void ExcludeConfigFromBackup(string? configFile = null)
     {
         Config config = Config.Load(configFile);
 
@@ -166,7 +166,7 @@ internal class ConfigCommands
         if (string.IsNullOrWhiteSpace(configFile))
             configFile = Config.DefaultConfigFile;
         Console.WriteLine(configFile);
-        if(File.Exists(configFile))
+        if (File.Exists(configFile))
             Console.WriteLine(File.ReadAllText(configFile));
     }
 }

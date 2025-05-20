@@ -30,7 +30,7 @@ public static class SimpleDownloader
     static FileStream CreateFile(string filename)
     {
         string? dirName = Path.GetDirectoryName(filename);
-        if(dirName != null)
+        if (dirName != null)
             Directory.CreateDirectory(dirName);
         return new FileStream(filename, FileMode.Create, FileAccess.Write, FileShare.Read, 4096, true);
     }

@@ -34,4 +34,3 @@ jobs:
             dotnet publish "MyBackupUtil/MyBackupUtil.csproj" /p:Configuration=Release -p:PublishProfile=win-x64 /p:Version=$TSV /p:ApplicationVersion=$TSV  /p:PublishDir=../publish
             rclone sync ../MyBackupUtil/publish :s3:s3.dustypig.tv/bin/mybackuputil --s3-provider Wasabi --s3-endpoint s3.us-central-1.wasabisys.com --s3-access-key-id ${{secrets.S3_KEY}} --s3-secret-access-key ${{secrets.S3_SECRET}} -v --timeout 10s
             rclone copyto ./version.txt :s3:s3.dustypig.tv/bin/mybackuputil/mybackuputil.version --s3-provider Wasabi --s3-endpoint s3.us-central-1.wasabisys.com --s3-access-key-id ${{secrets.S3_KEY}} --s3-secret-access-key ${{secrets.S3_SECRET}} -v --timeout 10s
-                
