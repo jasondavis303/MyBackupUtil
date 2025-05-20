@@ -1,6 +1,9 @@
 ﻿using ConsoleAppFramework;
 using System;
+using System.Diagnostics;
+using System.IO;
 using System.Reflection;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 
 namespace MyBackupUtil;
@@ -8,6 +11,8 @@ namespace MyBackupUtil;
 [RegisterCommands]
 internal class AppUpdater
 {
+    public const string MAGIC_KEY = "73F426D6D5D64F39B3379EC6F867DB59";
+
     const string URL_ROOT = "https://s3.dustypig.tv/bin/mybackuputil/mybackuputil";
     const string VERSION_URL = URL_ROOT + ".version";
     const string WINDOWS_URL = URL_ROOT + ".exe";
@@ -45,12 +50,53 @@ internal class AppUpdater
                 _ => LINUX_URL,
             };
 
-            await SimpleDownloader.DownloadFileAsync(url, Environment.GetCommandLineArgs()[0]);
+            string dst = Environment.OSVersion.Platform switch
+            {
+                PlatformID.Win32NT => Path.GetTempFileName() + ".exe",
+                _ => Environment.GetCommandLineArgs()[0]
+            };
+
+            await SimpleDownloader.DownloadFileAsync(url, dst);
+
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            {
+                string[] args =
+                [
+                    MAGIC_KEY,
+                    Environment.ProcessId.ToString(),
+                    Environment.GetCommandLineArgs()[0]
+                ];
+                Process.Start(dst, args);
+            }
+
             Console.WriteLine("Success");
         }
         else
         {
             Console.WriteLine($"Current version {currentVersion} is up to date");
         }
+    }
+
+
+    internal static bool WindowsUpdate(string[]? args)
+    {
+        if(args is null)
+            return false;
+
+        if (args.Length != 3)
+            return false;
+
+        if (args[0] != MAGIC_KEY)
+            return false;
+
+        if (!int.TryParse(args[1], out int pid))
+            return false;
+
+        try { Process.GetProcessById(pid).WaitForExit(); }
+        catch { }
+
+        File.Copy(Environment.GetCommandLineArgs()[0], args[2], true);
+
+        return true;
     }
 }
