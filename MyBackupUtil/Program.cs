@@ -2,12 +2,13 @@
 using MyBackupUtil.CLOptions;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace MyBackupUtil;
 
 internal class Program
 {
-    static void Main(string[] args)
+    static async Task Main(string[] args)
     {
 #if DEBUG
         string configFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "MyBackupUtil.json");
@@ -19,17 +20,30 @@ internal class Program
         //args = ["remove-directory", "-p", Directory.GetCurrentDirectory()];
         args = ["print"];
 #endif
-
         try
         {
-            Parser.Default.ParseArguments<RunOptions, AddDirectoryOptions, RemoveDirectoryOptions, AddFileOptions, RemoveFileOptions, SetRcloneOptions, PrintOptions>(args)
+            await Parser.Default.ParseArguments<
+                    RunOptions, 
+                    AddDirectoryOptions, 
+                    RemoveDirectoryOptions, 
+                    AddFileOptions, 
+                    RemoveFileOptions, 
+                    SetRcloneOptions, 
+                    PrintOptions,
+                    AddConfigOptions,
+                    RemoveConfigOptions,
+                    UpdateOptions
+                 >(args)
                 .WithParsed<AddDirectoryOptions>(ConfigEditor.AddDirectory)
                 .WithParsed<RemoveDirectoryOptions>(ConfigEditor.RemoveDirectory)
                 .WithParsed<AddFileOptions>(ConfigEditor.AddFile)
                 .WithParsed<RemoveFileOptions>(ConfigEditor.RemoveFile)
                 .WithParsed<SetRcloneOptions>(ConfigEditor.SetRclone)
                 .WithParsed<PrintOptions>(ConfigEditor.Print)
-                .WithParsed<RunOptions>(Runner.RunBackup);
+                .WithParsed<AddConfigOptions>(ConfigEditor.IncludeConfig)
+                .WithParsed<RemoveConfigOptions>(ConfigEditor.ExcludeConfig)
+                .WithParsed<RunOptions>(Runner.RunBackup)
+                .WithParsedAsync<UpdateOptions>(AppUpdater.Update);
         }
         catch (Exception ex)
         {

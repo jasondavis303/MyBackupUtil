@@ -23,6 +23,13 @@ internal static class Runner
             Config config = options.Config.ReadJson<Config>();
             string args;
 
+
+            //Add config file if desired
+            if (config.IncludeConfigFileInBackup)
+                if(!config.Files.Any(_ => _.Filename.Equals(options.Config.FullName)))
+                    config.Files.Add(new FileBackup { Filename = options.Config.FullName });
+
+
             //Copy files
             foreach(FileBackup fb in config.Files)
             {

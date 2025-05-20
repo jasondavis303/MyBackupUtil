@@ -10,6 +10,8 @@ internal class Config
 
     public string? RcloneFlags { get; set; }
 
+    public bool IncludeConfigFileInBackup { get; set; }
+
     public List<FileBackup> Files { get; set; } = [];
 
     public List<DirectoryBackup> Directories { get; set; } = [];

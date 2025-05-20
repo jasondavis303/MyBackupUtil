@@ -1,0 +1,23 @@
+name: Release
+on:
+  push
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with: 
+          dotnet-version: 9
+
+      - name: Build
+        run: |
+            sed -i "s/\(<Version>\([0-9]\+\.\)\{3\}\)\([0-9]\+\)/\1${{github.run_number}}/" "MyBackupUtil/MyBackupUtil.csproj"
+            dotnet publish "MyBackupUtil/MyBackupUtil.csproj" -c release -p:PublishProfile=linux-x64 -o publish
+            dotnet publish "MyBackupUtil/MyBackupUtil.csproj" -c release -p:PublishProfile=win-x64 -o publish

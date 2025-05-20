@@ -10,23 +10,40 @@ internal static class ConfigEditor
 {
     static Config Load(FileInfo config)
     {
-        try
-        {
-            return config.ReadJson<Config>();
-        }
-        catch
-        {
-            return new();
-        }
+        try { return config.ReadJson<Config>(); }
+        catch { return new(); }
     }
 
     public static void Print(PrintOptions options)
     {
         Console.WriteLine();
+        Console.WriteLine("Config: " + options.Config.FullName);
+        Console.WriteLine();
         Console.WriteLine(options.Config.ReadAllText());
         Console.WriteLine();
     }
 
+    public static void IncludeConfig(AddConfigOptions options)
+    {
+        Config config = Load(options.Config);
+        if (!config.IncludeConfigFileInBackup)
+        {
+            config.IncludeConfigFileInBackup = true;
+            options.Config.WriteJson(config);
+        }
+        Console.WriteLine("Config file added");
+    }
+
+    public static void ExcludeConfig(RemoveConfigOptions options)
+    {
+        Config config = Load(options.Config);
+        if (config.IncludeConfigFileInBackup)
+        {
+            config.IncludeConfigFileInBackup = false;
+            options.Config.WriteJson(config);
+        }
+        Console.WriteLine("Config file removed");
+    }
 
     public static void AddDirectory(AddDirectoryOptions options)
     {
