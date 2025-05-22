@@ -68,7 +68,7 @@ internal class ConfigCommands
         if (include != null)
             directoryBackup.RcloneIncludes.AddRange(include);
         if (exclude != null)
-            directoryBackup.RcloneIncludes.AddRange(exclude);
+            directoryBackup.RcloneExcludes.AddRange(exclude);
         config.Directories.Add(directoryBackup);
 
         config.Save(configFile);
