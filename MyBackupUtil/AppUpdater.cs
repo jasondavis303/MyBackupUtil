@@ -22,11 +22,13 @@ internal class AppUpdater
     /// </summary>
     public async Task Update()
     {
-        Console.WriteLine("Checking for updates");
-
+     
         Version currentVersion = new();
         try { currentVersion = Assembly.GetExecutingAssembly().GetName().Version!; }
         catch { }
+
+        Console.WriteLine($"MyBackupUtil v{currentVersion}");
+        Console.WriteLine("Checking for updates");
 
         Version newVersion;
         try
@@ -67,7 +69,7 @@ internal class AppUpdater
         }
         else
         {
-            Console.WriteLine($"Current version {currentVersion} is up to date");
+            Console.WriteLine("Current version is up to date");
         }
     }
 

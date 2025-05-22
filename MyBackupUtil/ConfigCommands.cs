@@ -133,7 +133,7 @@ internal class ConfigCommands
     /// Include the config file in backups
     /// </summary>
     /// <param name="configFile">-c, Config file</param>
-    public void IncludeConfigInBackup(string? configFile = null)
+    public void IncludeConfig(string? configFile = null)
     {
         Config config = Config.Load(configFile);
 
@@ -146,7 +146,7 @@ internal class ConfigCommands
     /// Exclude the config file from backups
     /// </summary>
     /// <param name="configFile">-c, Config file</param>
-    public void ExcludeConfigFromBackup(string? configFile = null)
+    public void ExcludeConfig(string? configFile = null)
     {
         Config config = Config.Load(configFile);
 
