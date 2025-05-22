@@ -43,30 +43,25 @@ internal class AppUpdater
         {
             Console.WriteLine($"Updating to: {newVersion}");
 
-            string url = Environment.OSVersion.Platform switch
-            {
-                PlatformID.Win32NT => WINDOWS_URL,
-                _ => LINUX_URL,
-            };
+            bool windows = Environment.OSVersion.Platform == PlatformID.Win32NT;
 
-            string dst = Environment.OSVersion.Platform switch
-            {
-                PlatformID.Win32NT => Path.GetTempFileName() + ".exe",
-                _ => Environment.GetCommandLineArgs()[0]
-            };
+            string url = windows ? WINDOWS_URL : LINUX_URL;
+
+            string dst = Path.Combine(Path.GetTempPath(), MAGIC_KEY);
+            if (windows)
+                dst += ".exe";
 
             await SimpleDownloader.DownloadFileAsync(url, dst);
 
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-            {
-                string[] args =
-                [
-                    MAGIC_KEY,
-                    Environment.ProcessId.ToString(),
-                    Environment.GetCommandLineArgs()[0]
-                ];
-                Process.Start(dst, args);
-            }
+            new FileInfo(dst).AddExecutePermission();
+
+            string[] args =
+            [
+                MAGIC_KEY,
+                Environment.ProcessId.ToString(),
+                Environment.GetCommandLineArgs()[0]
+            ];
+            Process.Start(dst, args);
 
             Console.WriteLine("Success");
         }
@@ -77,7 +72,7 @@ internal class AppUpdater
     }
 
 
-    internal static bool WindowsUpdate(string[]? args)
+    internal static bool WaitAndUpdate(string[]? args)
     {
         if(args is null)
             return false;
@@ -95,6 +90,7 @@ internal class AppUpdater
         catch { }
 
         File.Copy(Environment.GetCommandLineArgs()[0], args[2], true);
+        new FileInfo(args[2]).AddExecutePermission();
 
         return true;
     }
