@@ -64,11 +64,12 @@ internal class ConfigCommands
 
         config.Directories.RemoveAll(d => d.Directory == directory);
 
-        DirectoryBackup directoryBackup = new DirectoryBackup { Directory = directory };
+        DirectoryBackup directoryBackup = new() { Directory = directory };
         if (include != null)
             directoryBackup.RcloneIncludes.AddRange(include);
         if (exclude != null)
             directoryBackup.RcloneIncludes.AddRange(exclude);
+        config.Directories.Add(directoryBackup);
 
         config.Save(configFile);
     }
